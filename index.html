@@ -35,23 +35,11 @@ header .social a:hover{color:var(--ink)}
   header .social{grid-row:2}
 }
 
-/* home slider */
-.home{margin-top:9vh}
-.track{display:flex;gap:32px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px;cursor:grab}
-.track::-webkit-scrollbar{display:none}
-.track.drag{cursor:grabbing;scroll-snap-type:none}
-.slide{flex:0 0 calc((100% - 64px)/3);scroll-snap-align:start;display:block}
-.slide .fr{aspect-ratio:2/3;background:var(--ph);overflow:hidden}
-.slide .fr img{width:100%;height:100%;object-fit:cover;transition:opacity .3s}
-.slide:hover .fr img{opacity:.92}
-.slide .cap{display:flex;justify-content:space-between;margin-top:8px}
-.slide .cap span+span{color:var(--mute)}
-@media (max-width:900px){ .slide{flex-basis:calc((100% - 32px)/2)} }
-@media (max-width:560px){ .slide{flex-basis:82%} }
-.slider-foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:22px;color:var(--mute)}
-.slider-foot .arrows{display:flex;gap:16px}
-.slider-foot button:hover{color:var(--ink)}
-.slider-foot button:disabled{opacity:.3;cursor:default}
+/* home feed: every image across all categories, one vertical column */
+.feed{margin:9vh auto 0;display:flex;flex-direction:column;gap:40px;max-width:640px}
+.feed a{display:block}
+.feed img{width:100%}
+.feed .cap{margin-top:8px;color:var(--mute)}
 
 /* page head */
 .page-head{margin-top:7vh;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px}
@@ -136,39 +124,27 @@ document.getElementById("siteName").textContent = SITE.name.toUpperCase();
 document.getElementById("social").innerHTML = SITE.social.map(([l,h]) => `<a href="${esc(h)}" target="_blank" rel="noopener">${esc(l)}</a>`).join("");
 document.title = SITE.name;
 
-/* home: category slider */
+function shuffled(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* home: every image across all categories, shuffled into one vertical feed */
 function renderHome() {
+  const feed = shuffled(CATEGORIES.flatMap(c => c.images.map(i => ({...i, brand: c.name}))));
   app.innerHTML = `
-    <section class="home">
-      <div class="track" id="track">
-        ${CATEGORIES.map(c => `
-          <a class="slide" href="#/category/${c.slug}">
-            <div class="fr"><img src="${esc(c.cover)}" alt="${esc(c.name)}" loading="lazy"></div>
-            <div class="cap"><span>${esc(c.name)}</span><span>${c.images.length}</span></div>
-          </a>`).join("")}
-      </div>
-      <div class="slider-foot">
-        <span id="counter"></span>
-        <span class="arrows"><button id="prev" aria-label="Previous">←</button><button id="next" aria-label="Next">→</button></span>
-      </div>
+    <section class="feed">
+      ${feed.map((i,k) => `
+        <a href="#" data-lb="${k}">
+          ${im(i, `${i.brand} ${pad(k+1)}`)}
+          <div class="cap"><span>${esc(i.brand)}</span></div>
+        </a>`).join("")}
     </section>`;
-  const track = document.getElementById("track");
-  const step = () => track.querySelector(".slide").getBoundingClientRect().width + 32;
-  const update = () => {
-    const i = Math.round(track.scrollLeft / step()), per = Math.round(track.clientWidth / step());
-    document.getElementById("counter").textContent = `${pad(i+1)} / ${pad(CATEGORIES.length)}`;
-    document.getElementById("prev").disabled = i <= 0;
-    document.getElementById("next").disabled = i >= CATEGORIES.length - per;
-  };
-  document.getElementById("prev").onclick = () => track.scrollBy({left:-step(), behavior:"smooth"});
-  document.getElementById("next").onclick = () => track.scrollBy({left: step(), behavior:"smooth"});
-  track.addEventListener("scroll", update, {passive:true}); addEventListener("resize", update); update();
-  let down=false, sx=0, sl=0, moved=false;
-  track.addEventListener("pointerdown", e => { down=true; moved=false; sx=e.clientX; sl=track.scrollLeft; track.classList.add("drag"); });
-  addEventListener("pointermove", e => { if(!down) return; const dx=e.clientX-sx; if(Math.abs(dx)>4) moved=true; track.scrollLeft=sl-dx; });
-  addEventListener("pointerup", () => { down=false; track.classList.remove("drag"); });
-  track.addEventListener("click", e => { if(moved) e.preventDefault(); }, true);
-  document.onkeydown = e => { if(e.key==="ArrowRight") document.getElementById("next").click(); if(e.key==="ArrowLeft") document.getElementById("prev").click(); };
+  bindLightbox(feed);
 }
 
 /* category: masonry gallery with lightbox */
@@ -236,21 +212,24 @@ function notFound() { app.innerHTML = `<p class="empty">Page not found. <a href=
 
 /* lightbox */
 const lb = document.getElementById("lb"), lbi = document.getElementById("lbi"), lbn = document.getElementById("lbn");
-let lbImgs = [], lbIdx = 0;
-function bindLightbox(images, title) {
-  lbImgs = images;
-  app.querySelectorAll("[data-lb]").forEach(a => a.onclick = e => { e.preventDefault(); openLb(+a.dataset.lb, title); });
+let lbImgs = [], lbIdx = 0, lbLabel = null;
+function bindLightbox(images, label) {
+  lbImgs = images; lbLabel = label || null;
+  app.querySelectorAll("[data-lb]").forEach(a => a.onclick = e => { e.preventDefault(); openLb(+a.dataset.lb); });
 }
-function openLb(k, title) {
-  lbIdx = k; lbi.src = lbImgs[k].src.replace(/\?format=\d+w$/, "?format=2500w"); lbi.alt = title;
-  lbn.textContent = `${pad(k+1)} / ${pad(lbImgs.length)}`; lb.classList.add("show");
+function openLb(k) {
+  lbIdx = k;
+  const item = lbImgs[k], label = lbLabel || item.brand || "";
+  lbi.src = item.src.replace(/\?format=\d+w$/, "?format=2500w"); lbi.alt = label;
+  lbn.textContent = `${label ? label + " · " : ""}${pad(k+1)} / ${pad(lbImgs.length)}`;
+  lb.classList.add("show");
 }
 lb.onclick = () => lb.classList.remove("show");
 addEventListener("keydown", e => {
   if (!lb.classList.contains("show")) return;
   if (e.key === "Escape") lb.classList.remove("show");
-  if (e.key === "ArrowRight" && lbIdx < lbImgs.length-1) openLb(lbIdx+1, lbi.alt);
-  if (e.key === "ArrowLeft" && lbIdx > 0) openLb(lbIdx-1, lbi.alt);
+  if (e.key === "ArrowRight" && lbIdx < lbImgs.length-1) openLb(lbIdx+1);
+  if (e.key === "ArrowLeft" && lbIdx > 0) openLb(lbIdx-1);
 });
 
 function route() {
