@@ -227,8 +227,8 @@ function renderContact() {
   app.innerHTML = `<section class="about">
     <p>${esc(SITE.contact_note)}</p>
     <div class="links">
-      <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>
-      <a href="tel:${esc(SITE.phone.replace(/\s/g,""))}">${esc(SITE.phone)}</a>
+      ${SITE.email ? `<a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>` : ""}
+      ${SITE.phone ? `<a href="tel:${esc(SITE.phone.replace(/\s/g,""))}">${esc(SITE.phone)}</a>` : ""}
       ${SITE.social.map(([l,h]) => `<a href="${esc(h)}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}
     </div></section>`;
 }
