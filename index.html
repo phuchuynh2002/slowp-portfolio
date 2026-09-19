@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lancengx Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{ --bg:#ffffff; --ink:#000000; --mute:#8a8a8a; --rule:#e6e6e6; --ph:#ececea; --gap:24px; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#0a0a0a; --ink:#f2f2f2; --mute:#7a7a7a; --rule:#222; --ph:#1c1c1c; }
+}
+:root[data-theme="dark"]{ --bg:#0a0a0a; --ink:#f2f2f2; --mute:#7a7a7a; --rule:#222; --ph:#1c1c1c; }
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:"Instrument Sans","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;letter-spacing:.01em;-webkit-font-smoothing:antialiased;padding:22px var(--gap) 60px;min-height:100vh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+img{display:block;max-width:100%;height:auto;background:var(--ph)}
+main{flex:1;display:flex;flex-direction:column}
+
+header{display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;gap:24px}
+header nav{display:flex;gap:18px}
+header nav a.on{text-decoration:underline;text-underline-offset:4px}
+header .name{font-weight:500;letter-spacing:.08em;text-align:center}
+header .social{display:flex;gap:18px;justify-content:flex-end;color:var(--mute)}
+header .social a:hover{color:var(--ink)}
+@media (max-width:700px){
+  header{grid-template-columns:1fr 1fr}
+  header .name{grid-column:1/-1;grid-row:1;text-align:left}
+  header nav{grid-row:2;flex-wrap:wrap;gap:12px 16px}
+  header .social{grid-row:2}
+}
+
+/* home slider */
+.home{margin-top:9vh}
+.track{display:flex;gap:32px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px;cursor:grab}
+.track::-webkit-scrollbar{display:none}
+.track.drag{cursor:grabbing;scroll-snap-type:none}
+.slide{flex:0 0 calc((100% - 64px)/3);scroll-snap-align:start;display:block}
+.slide .fr{aspect-ratio:2/3;background:var(--ph);overflow:hidden}
+.slide .fr img{width:100%;height:100%;object-fit:cover;transition:opacity .3s}
+.slide:hover .fr img{opacity:.92}
+.slide .cap{display:flex;justify-content:space-between;margin-top:8px}
+.slide .cap span+span{color:var(--mute)}
+@media (max-width:900px){ .slide{flex-basis:calc((100% - 32px)/2)} }
+@media (max-width:560px){ .slide{flex-basis:82%} }
+.slider-foot{display:flex;justify-content:space-between;align-items:baseline;margin-top:22px;color:var(--mute)}
+.slider-foot .arrows{display:flex;gap:16px}
+.slider-foot button:hover{color:var(--ink)}
+.slider-foot button:disabled{opacity:.3;cursor:default}
+
+/* page head */
+.page-head{margin-top:7vh;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px}
+.page-head h1{font-size:12px;font-weight:500}
+.page-head span{color:var(--mute)}
+
+/* masonry gallery (category) */
+.masonry{columns:3;column-gap:24px}
+.masonry a{display:block;break-inside:avoid;margin-bottom:24px}
+.masonry img{width:100%}
+@media (max-width:900px){ .masonry{columns:2} }
+@media (max-width:560px){ .masonry{columns:1} }
+
+/* project grid (all projects) */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px 24px}
+.grid a{display:block}
+.grid .fr{aspect-ratio:2/3;background:var(--ph);overflow:hidden}
+.grid .fr img{width:100%;height:100%;object-fit:cover}
+.grid .cap{display:flex;justify-content:space-between;margin-top:8px}
+.grid .cap span+span{color:var(--mute)}
+@media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:560px){ .grid{grid-template-columns:1fr} }
+
+/* project */
+.project{margin-top:7vh;display:grid;grid-template-columns:240px 1fr;gap:48px;align-items:start}
+.project .meta{position:sticky;top:22px}
+.project h1{font-size:12px;font-weight:500;margin-bottom:2px}
+.project .sub{color:var(--mute);margin-bottom:22px}
+.project .desc{max-width:34ch;margin-bottom:22px}
+.project dl{display:grid;grid-template-columns:auto 1fr;gap:3px 16px;color:var(--mute)}
+.project dd{color:var(--ink)}
+.project .pn{margin-top:40px;display:flex;flex-direction:column;gap:4px;color:var(--mute)}
+.project .pn a:hover{color:var(--ink)}
+.frames{display:grid;grid-template-columns:1fr 1fr;gap:32px 24px;max-width:1100px;align-items:start}
+.frames img{width:100%}
+.frames .w{grid-column:1/-1}
+@media (max-width:900px){ .project{grid-template-columns:1fr;gap:32px} .project .meta{position:static} }
+@media (max-width:560px){ .frames{grid-template-columns:1fr} }
+
+/* about / contact */
+.about{margin-top:9vh;max-width:56ch}
+.about p+p{margin-top:1em}
+.about .links{margin-top:32px;display:flex;flex-direction:column;gap:4px;color:var(--mute)}
+.about .links a:hover{color:var(--ink)}
+
+/* lightbox */
+.lb{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:10;cursor:zoom-out}
+.lb.show{display:flex}
+.lb img{max-width:calc(100vw - 48px);max-height:calc(100vh - 48px);width:auto;height:auto;background:none}
+.lb .n{position:absolute;top:22px;left:24px;color:var(--mute)}
+
+.empty{margin-top:12vh;color:var(--mute)}
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="#/projects" data-nav="projects">Projects</a>
+    <a href="#/" data-nav="home">Categories</a>
+    <a href="#/about" data-nav="about">About</a>
+    <a href="#/contact" data-nav="contact">Contact</a>
+  </nav>
+  <a class="name" href="#/" id="siteName"></a>
+  <div class="social" id="social"></div>
+</header>
+
+<main id="app"></main>
+<div class="lb" id="lb"><span class="n" id="lbn"></span><img id="lbi" alt=""></div>
+
+<script src="data/site.js"></script>
+<script src="data/categories.js"></script>
+<script src="data/projects.js"></script>
+<script>
+const app = document.getElementById("app");
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pad = n => String(n).padStart(2,"0");
+const im = (i, alt, extra="") => `<img src="${esc(i.src)}" alt="${esc(alt)}" width="${i.w}" height="${i.h}" loading="lazy" ${extra}>`;
+
+document.getElementById("siteName").textContent = SITE.name.toUpperCase();
+document.getElementById("social").innerHTML = SITE.social.map(([l,h]) => `<a href="${esc(h)}" target="_blank" rel="noopener">${esc(l)}</a>`).join("");
+document.title = SITE.name;
+
+/* home: category slider */
+function renderHome() {
+  app.innerHTML = `
+    <section class="home">
+      <div class="track" id="track">
+        ${CATEGORIES.map(c => `
+          <a class="slide" href="#/category/${c.slug}">
+            <div class="fr"><img src="${esc(c.cover)}" alt="${esc(c.name)}" loading="lazy"></div>
+            <div class="cap"><span>${esc(c.name)}</span><span>${c.images.length}</span></div>
+          </a>`).join("")}
+      </div>
+      <div class="slider-foot">
+        <span id="counter"></span>
+        <span class="arrows"><button id="prev" aria-label="Previous">←</button><button id="next" aria-label="Next">→</button></span>
+      </div>
+    </section>`;
+  const track = document.getElementById("track");
+  const step = () => track.querySelector(".slide").getBoundingClientRect().width + 32;
+  const update = () => {
+    const i = Math.round(track.scrollLeft / step()), per = Math.round(track.clientWidth / step());
+    document.getElementById("counter").textContent = `${pad(i+1)} / ${pad(CATEGORIES.length)}`;
+    document.getElementById("prev").disabled = i <= 0;
+    document.getElementById("next").disabled = i >= CATEGORIES.length - per;
+  };
+  document.getElementById("prev").onclick = () => track.scrollBy({left:-step(), behavior:"smooth"});
+  document.getElementById("next").onclick = () => track.scrollBy({left: step(), behavior:"smooth"});
+  track.addEventListener("scroll", update, {passive:true}); addEventListener("resize", update); update();
+  let down=false, sx=0, sl=0, moved=false;
+  track.addEventListener("pointerdown", e => { down=true; moved=false; sx=e.clientX; sl=track.scrollLeft; track.classList.add("drag"); });
+  addEventListener("pointermove", e => { if(!down) return; const dx=e.clientX-sx; if(Math.abs(dx)>4) moved=true; track.scrollLeft=sl-dx; });
+  addEventListener("pointerup", () => { down=false; track.classList.remove("drag"); });
+  track.addEventListener("click", e => { if(moved) e.preventDefault(); }, true);
+  document.onkeydown = e => { if(e.key==="ArrowRight") document.getElementById("next").click(); if(e.key==="ArrowLeft") document.getElementById("prev").click(); };
+}
+
+/* category: masonry gallery with lightbox */
+function renderCategory(slug) {
+  const c = CATEGORIES.find(x => x.slug === slug);
+  if (!c) return notFound();
+  app.innerHTML = `
+    <div class="page-head"><h1>${esc(c.name)}</h1><span>${c.images.length} images</span></div>
+    <div class="masonry">${c.images.map((i,k) => `<a href="#" data-lb="${k}">${im(i, `${c.name} ${pad(k+1)}`)}</a>`).join("")}</div>`;
+  bindLightbox(c.images, c.name);
+}
+
+/* all projects */
+function renderProjects() {
+  app.innerHTML = `
+    <div class="page-head"><h1>Projects</h1><span>${PROJECTS.length}</span></div>
+    <div class="grid">${PROJECTS.map(p => `
+      <a href="#/work/${p.slug}">
+        <div class="fr"><img src="${esc(p.cover)}" alt="${esc(p.title)}" loading="lazy"></div>
+        <div class="cap"><span>${esc(p.title)}</span><span>${p.year || ""}</span></div>
+      </a>`).join("")}</div>`;
+}
+
+/* one project */
+function renderProject(slug) {
+  const i = PROJECTS.findIndex(x => x.slug === slug);
+  if (i < 0) return notFound();
+  const p = PROJECTS[i], prev = PROJECTS[i-1], next = PROJECTS[i+1];
+  const credits = Object.entries(p.credits || {});
+  app.innerHTML = `
+    <article class="project">
+      <div class="meta">
+        <h1>${esc(p.title)}</h1>
+        <p class="sub">${p.year || ""}${p.client ? ", " + esc(p.client) : ""}</p>
+        ${p.description ? `<p class="desc">${esc(p.description)}</p>` : ""}
+        <dl>
+          ${credits.map(([k,v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}
+          <dt>Images</dt><dd>${p.images.length}</dd>
+        </dl>
+        <div class="pn">
+          ${prev ? `<a href="#/work/${prev.slug}">← ${esc(prev.title)}</a>` : ""}
+          ${next ? `<a href="#/work/${next.slug}">${esc(next.title)} →</a>` : ""}
+          <a href="#/projects">All projects</a>
+        </div>
+      </div>
+      <div class="frames">${p.images.map((img,k) =>
+        `<a href="#" data-lb="${k}" class="${img.w > img.h ? "w" : ""}">${im(img, `${p.title} ${pad(k+1)}`)}</a>`).join("")}</div>
+    </article>`;
+  bindLightbox(p.images, p.title);
+}
+
+function renderAbout() {
+  app.innerHTML = `<section class="about">${SITE.about.map(t => `<p>${esc(t)}</p>`).join("")}</section>`;
+}
+function renderContact() {
+  app.innerHTML = `<section class="about">
+    <p>${esc(SITE.contact_note)}</p>
+    <div class="links">
+      <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>
+      <a href="tel:${esc(SITE.phone.replace(/\s/g,""))}">${esc(SITE.phone)}</a>
+      ${SITE.social.map(([l,h]) => `<a href="${esc(h)}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}
+    </div></section>`;
+}
+function notFound() { app.innerHTML = `<p class="empty">Page not found. <a href="#/">Home</a></p>`; }
+
+/* lightbox */
+const lb = document.getElementById("lb"), lbi = document.getElementById("lbi"), lbn = document.getElementById("lbn");
+let lbImgs = [], lbIdx = 0;
+function bindLightbox(images, title) {
+  lbImgs = images;
+  app.querySelectorAll("[data-lb]").forEach(a => a.onclick = e => { e.preventDefault(); openLb(+a.dataset.lb, title); });
+}
+function openLb(k, title) {
+  lbIdx = k; lbi.src = lbImgs[k].src.replace(/\?format=\d+w$/, "?format=2500w"); lbi.alt = title;
+  lbn.textContent = `${pad(k+1)} / ${pad(lbImgs.length)}`; lb.classList.add("show");
+}
+lb.onclick = () => lb.classList.remove("show");
+addEventListener("keydown", e => {
+  if (!lb.classList.contains("show")) return;
+  if (e.key === "Escape") lb.classList.remove("show");
+  if (e.key === "ArrowRight" && lbIdx < lbImgs.length-1) openLb(lbIdx+1, lbi.alt);
+  if (e.key === "ArrowLeft" && lbIdx > 0) openLb(lbIdx-1, lbi.alt);
+});
+
+function route() {
+  const [seg, slug] = location.hash.replace(/^#\/?/, "").split("/");
+  document.onkeydown = null; lb.classList.remove("show");
+  document.querySelectorAll("[data-nav]").forEach(a => a.classList.toggle("on", a.dataset.nav === (seg || "home")));
+  if (seg === "category" && slug) renderCategory(slug);
+  else if (seg === "work" && slug) renderProject(slug);
+  else if (seg === "projects") renderProjects();
+  else if (seg === "about") renderAbout();
+  else if (seg === "contact") renderContact();
+  else renderHome();
+  scrollTo(0,0);
+}
+addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
