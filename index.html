@@ -18,19 +18,21 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;paddin
 img{display:block;max-width:100%;height:auto;background:var(--ph)}
 main{flex:1;display:flex;flex-direction:column}
 
-/* sticky header: stays visible while scrolling, nav shown directly (no dropdown) */
-header{position:sticky;top:0;z-index:15;background:var(--bg);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding-bottom:14px}
-header .site-nav{display:flex;gap:18px}
-header .site-nav a.on{text-decoration:underline;text-underline-offset:4px}
-header .name{font-weight:500;letter-spacing:.08em;text-align:center}
-header .social{display:flex;gap:16px;justify-content:flex-end;color:var(--mute)}
-header .social a:hover{color:var(--ink)}
+/* two-column layout: vertical nav sidebar (sticky) + content, with a generous gap between them */
+.layout{display:grid;grid-template-columns:180px 1fr;gap:72px;align-items:start}
+.side-header{position:sticky;top:32px;display:flex;flex-direction:column;gap:48px}
+.side-header .name{font-weight:500;letter-spacing:.08em}
+.side-header .site-nav{display:flex;flex-direction:column;gap:20px}
+.side-header .site-nav a.on{color:var(--mute)}
+.side-header .social{position:fixed;top:22px;right:var(--gap);display:flex;gap:16px;color:var(--mute)}
+.side-header .social a:hover{color:var(--ink)}
 @media (max-width:700px){
-  header{grid-template-columns:1fr 1fr}
-  header .name{grid-column:1/-1;grid-row:1;text-align:center;padding-bottom:12px}
-  header .site-nav{grid-row:2;flex-wrap:wrap;gap:12px 16px}
-  header .social{grid-row:2}
+  .layout{grid-template-columns:1fr;gap:8px}
+  .side-header{position:static;flex-direction:row;flex-wrap:wrap;align-items:center;gap:16px 24px;margin-bottom:20px}
+  .side-header .site-nav{flex-direction:row;flex-wrap:wrap;gap:12px 16px}
+  .side-header .social{position:static;gap:16px}
 }
+@media (max-width:560px){ .side-header .social{display:none} }
 
 /* home: every image across all categories, shuffled into a square-tile grid */
 .tile-grid{margin-top:7vh;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
@@ -98,18 +100,19 @@ header .social a:hover{color:var(--ink)}
 </head>
 <body>
 
-<header>
-  <nav class="site-nav">
-    <a href="#/projects" data-nav="projects">Projects</a>
-    <a href="#/" data-nav="home">Categories</a>
-    <a href="#/about" data-nav="about">About</a>
-    <a href="#/contact" data-nav="contact">Contact</a>
-  </nav>
-  <a class="name" href="#/" id="siteName"></a>
-  <div class="social" id="social"></div>
-</header>
-
-<main id="app"></main>
+<div class="layout">
+  <aside class="side-header">
+    <a class="name" href="#/" id="siteName"></a>
+    <nav class="site-nav">
+      <a href="#/projects" data-nav="projects">Projects</a>
+      <a href="#/" data-nav="home">Categories</a>
+      <a href="#/about" data-nav="about">About</a>
+      <a href="#/contact" data-nav="contact">Contact</a>
+    </nav>
+    <div class="social" id="social"></div>
+  </aside>
+  <main id="app"></main>
+</div>
 <div class="lb" id="lb"><span class="n" id="lbn"></span><img id="lbi" alt=""></div>
 
 <script src="data/site.js"></script>
