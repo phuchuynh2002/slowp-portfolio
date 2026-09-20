@@ -41,7 +41,6 @@ main{flex:1;display:flex;flex-direction:column}
 .tile-grid .fr{aspect-ratio:1/1;background:var(--ph);overflow:hidden}
 .tile-grid .fr img{width:100%;height:100%;object-fit:cover;transition:opacity .3s}
 .tile-grid a:hover .fr img{opacity:.85}
-.tile-grid .cap{margin-top:6px;color:var(--mute)}
 @media (max-width:900px){ .tile-grid{grid-template-columns:repeat(3,1fr)} }
 @media (max-width:560px){ .tile-grid{grid-template-columns:repeat(2,1fr);gap:3px} }
 
@@ -140,13 +139,12 @@ function shuffled(arr) {
 
 /* home: every image across all categories, shuffled into a square-tile grid */
 function renderHome() {
-  const feed = shuffled(CATEGORIES.flatMap(c => c.images.map(i => ({...i, brand: c.name}))));
+  const feed = shuffled(CATEGORIES.flatMap(c => c.images.filter(i => !i.homeHidden)));
   app.innerHTML = `
     <section class="tile-grid">
       ${feed.map((i,k) => `
         <a href="#" data-lb="${k}">
-          <div class="fr">${im(i, `${i.brand} ${pad(k+1)}`)}</div>
-          <div class="cap"><span>${esc(i.brand)}</span></div>
+          <div class="fr">${im(i, `Slowp Studio ${pad(k+1)}`)}</div>
         </a>`).join("")}
     </section>`;
   bindLightbox(feed);

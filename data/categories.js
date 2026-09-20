@@ -135,7 +135,8 @@ window.CATEGORIES = [
       {
         "src": "https://images-pw.pixieset.com/elementfield/4yM7bw0/HOTPOTLAU7355-4023ccc2-2500.jpg",
         "w": 2500,
-        "h": 3750
+        "h": 3750,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/4yM7bw0/LIFESTYLEBUFFET2174-c91ecb98-2500.jpg",
@@ -244,7 +245,8 @@ window.CATEGORIES = [
       {
         "src": "https://images-pw.pixieset.com/elementfield/myPRrkQ/SLP04944-4320ab00-2500.jpg",
         "w": 819,
-        "h": 1228
+        "h": 1228,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP06959-0f75f55c-1000.JPG",
@@ -284,62 +286,74 @@ window.CATEGORIES = [
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05147-c1bb93cf-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05186-330c113c-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05205-92c9572c-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05323-607ed5df-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05208-d042da0c-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05346-22f558ff-1000.jpg",
         "w": 1000,
-        "h": 667
+        "h": 667,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05358-4fe14551-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05502-0a275bd5-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05227-f890d926-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05574-59559f36-1000.jpg",
         "w": 1000,
-        "h": 667
+        "h": 667,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05179-abe21dc5-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/K5e9Pb6/SLP05777-c427a940-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       }
     ]
   },
@@ -391,7 +405,8 @@ window.CATEGORIES = [
       {
         "src": "https://images-pw.pixieset.com/elementfield/ovQLZZO/DSCF6848-a17415e6-1000.jpg",
         "w": 1000,
-        "h": 1500
+        "h": 1500,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/ovQLZZO/DSCF6834-84a748b7-1000.jpg",
