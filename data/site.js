@@ -1,6 +1,6 @@
 // Cập nhật từ slowp2608.mypixieset.com. Sửa file này để cập nhật.
 window.SITE = {
-  "name": "Slowp",
+  "name": "Slowp Studio",
   "tagline": "FNB & Lifestyle Photography — Hồ Chí Minh City",
   "email": "",
   "phone": "",
