@@ -28,12 +28,11 @@ main{flex:1;display:flex;flex-direction:column}
 .side-header .social a:hover{color:#fff}
 @media (max-width:700px){
   .layout{grid-template-columns:1fr;gap:8px}
-  .side-header{position:static;flex-direction:row;flex-wrap:wrap;align-items:center;gap:16px 24px;margin-bottom:20px}
-  .side-header .site-nav{flex-direction:row;flex-wrap:wrap;gap:12px 16px}
-  .side-header .social{position:static;gap:16px;padding:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;color:var(--mute)}
+  .side-header{position:sticky;top:0;z-index:15;background:var(--bg);flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px 20px;padding:16px 0 14px;margin-bottom:0}
+  .side-header .site-nav{flex-direction:row;flex-wrap:wrap;gap:10px 14px;font-size:13px}
+  .side-header .social{position:static;gap:14px;padding:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;color:var(--mute)}
   .side-header .social a:hover{color:var(--ink)}
 }
-@media (max-width:560px){ .side-header .social{display:none} }
 
 /* home: every image across all categories, shuffled into a square-tile grid */
 .tile-grid{margin-top:7vh;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
@@ -91,11 +90,20 @@ main{flex:1;display:flex;flex-direction:column}
 /* lightbox */
 .lb{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:30;cursor:zoom-out}
 .lb.show{display:flex}
-.lb img{max-width:calc(100vw - 48px);max-height:calc(100vh - 48px);width:auto;height:auto;background:none}
+.lb img{max-width:calc(100vw - 48px);max-height:calc(100vh - 48px);width:auto;height:auto;background:none;pointer-events:none}
 .lb .n{position:absolute;top:22px;left:24px;color:var(--mute)}
+.lb .x{position:absolute;top:14px;right:20px;font-size:26px;line-height:1;color:var(--mute);padding:8px;cursor:pointer}
+.lb .x:hover{color:var(--ink)}
 
 .empty{margin-top:12vh;color:var(--mute)}
 @media (prefers-reduced-motion:reduce){ *{transition:none!important;scroll-behavior:auto!important} }
+
+/* mobile: the generous desktop top spacing (7-12vh) reads as dead space on short screens */
+@media (max-width:700px){
+  .tile-grid,.page-head,.project{margin-top:28px}
+  .about{margin-top:28px}
+  .empty{margin-top:20vh}
+}
 </style>
 </head>
 <body>
@@ -113,7 +121,7 @@ main{flex:1;display:flex;flex-direction:column}
   </aside>
   <main id="app"></main>
 </div>
-<div class="lb" id="lb"><span class="n" id="lbn"></span><img id="lbi" alt=""></div>
+<div class="lb" id="lb"><span class="n" id="lbn"></span><span class="x" id="lbx" aria-label="Close">×</span><img id="lbi" alt=""></div>
 
 <script src="data/site.js"></script>
 <script src="data/categories.js"></script>
@@ -213,8 +221,9 @@ function renderContact() {
 }
 function notFound() { app.innerHTML = `<p class="empty">Page not found. <a href="#/">Home</a></p>`; }
 
-/* lightbox */
-const lb = document.getElementById("lb"), lbi = document.getElementById("lbi"), lbn = document.getElementById("lbn");
+/* lightbox: click/tap the left or right edge to go prev/next, the middle to close;
+   swipe left/right on touch does the same; Escape/arrow keys still work on desktop */
+const lb = document.getElementById("lb"), lbi = document.getElementById("lbi"), lbn = document.getElementById("lbn"), lbx = document.getElementById("lbx");
 let lbImgs = [], lbIdx = 0, lbLabel = null;
 function bindLightbox(images, label) {
   lbImgs = images; lbLabel = label || null;
@@ -225,19 +234,34 @@ function openLb(k) {
   const item = lbImgs[k], label = lbLabel || item.brand || "";
   lbi.src = item.src.replace(/\?format=\d+w$/, "?format=2500w"); lbi.alt = label;
   lbn.textContent = `${label ? label + " · " : ""}${pad(k+1)} / ${pad(lbImgs.length)}`;
-  lb.classList.add("show");
+  lb.classList.add("show"); document.body.style.overflow = "hidden";
 }
-lb.onclick = () => lb.classList.remove("show");
+function closeLb() { lb.classList.remove("show"); document.body.style.overflow = ""; }
+lbx.onclick = e => { e.stopPropagation(); closeLb(); };
+lb.onclick = e => {
+  const x = e.clientX / window.innerWidth;
+  if (x < 0.3) { if (lbIdx > 0) openLb(lbIdx-1); }
+  else if (x > 0.7) { if (lbIdx < lbImgs.length-1) openLb(lbIdx+1); }
+  else closeLb();
+};
+let lbTouchX = 0, lbTouchY = 0;
+lb.addEventListener("touchstart", e => { const t = e.touches[0]; lbTouchX = t.clientX; lbTouchY = t.clientY; }, {passive:true});
+lb.addEventListener("touchend", e => {
+  const t = e.changedTouches[0], dx = t.clientX - lbTouchX, dy = t.clientY - lbTouchY;
+  if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+  if (dx < 0 && lbIdx < lbImgs.length-1) openLb(lbIdx+1);
+  else if (dx > 0 && lbIdx > 0) openLb(lbIdx-1);
+}, {passive:true});
 addEventListener("keydown", e => {
   if (!lb.classList.contains("show")) return;
-  if (e.key === "Escape") lb.classList.remove("show");
+  if (e.key === "Escape") closeLb();
   if (e.key === "ArrowRight" && lbIdx < lbImgs.length-1) openLb(lbIdx+1);
   if (e.key === "ArrowLeft" && lbIdx > 0) openLb(lbIdx-1);
 });
 
 function route() {
   const [seg, slug] = location.hash.replace(/^#\/?/, "").split("/");
-  document.onkeydown = null; lb.classList.remove("show");
+  document.onkeydown = null; closeLb();
   document.querySelectorAll("[data-nav]").forEach(a => a.classList.toggle("on", a.dataset.nav === (seg || "home")));
   if (seg === "category" && slug) renderCategory(slug);
   else if (seg === "work" && slug) renderProject(slug);
