@@ -24,13 +24,14 @@ main{flex:1;display:flex;flex-direction:column}
 .side-header .name{font-weight:500;letter-spacing:.08em}
 .side-header .site-nav{display:flex;flex-direction:column;gap:20px}
 .side-header .site-nav a.on{color:var(--mute)}
-.side-header .social{position:fixed;top:22px;right:var(--gap);display:flex;gap:16px;color:var(--mute)}
-.side-header .social a:hover{color:var(--ink)}
+.side-header .social{position:fixed;top:0;right:0;display:flex;gap:16px;padding:22px var(--gap) 36px 56px;background:linear-gradient(135deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.32) 45%,rgba(0,0,0,0) 100%);color:#f2efe8}
+.side-header .social a:hover{color:#fff}
 @media (max-width:700px){
   .layout{grid-template-columns:1fr;gap:8px}
   .side-header{position:static;flex-direction:row;flex-wrap:wrap;align-items:center;gap:16px 24px;margin-bottom:20px}
   .side-header .site-nav{flex-direction:row;flex-wrap:wrap;gap:12px 16px}
-  .side-header .social{position:static;gap:16px}
+  .side-header .social{position:static;gap:16px;padding:0;background:none;color:var(--mute)}
+  .side-header .social a:hover{color:var(--ink)}
 }
 @media (max-width:560px){ .side-header .social{display:none} }
 
