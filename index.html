@@ -34,14 +34,11 @@ main{flex:1;display:flex;flex-direction:column}
   .side-header .social a:hover{color:var(--ink)}
 }
 
-/* home: every image across all categories, shuffled into a square-tile grid */
-.tile-grid{margin-top:7vh;display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-.tile-grid a{display:block}
-.tile-grid .fr{aspect-ratio:1/1;background:var(--ph);overflow:hidden}
-.tile-grid .fr img{width:100%;height:100%;object-fit:cover;transition:opacity .3s}
-.tile-grid a:hover .fr img{opacity:.85}
-@media (max-width:900px){ .tile-grid{grid-template-columns:repeat(3,1fr)} }
-@media (max-width:560px){ .tile-grid{grid-template-columns:repeat(2,1fr);gap:3px} }
+/* home: every image across all categories, shuffled into a single vertical column */
+.feed{margin:7vh auto 0;display:flex;flex-direction:column;gap:32px;max-width:440px}
+.feed a{display:block}
+.feed img{width:100%;transition:opacity .3s}
+.feed a:hover img{opacity:.85}
 
 /* page head */
 .page-head{margin-top:7vh;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px}
@@ -100,7 +97,7 @@ main{flex:1;display:flex;flex-direction:column}
 
 /* mobile: the generous desktop top spacing (7-12vh) reads as dead space on short screens */
 @media (max-width:700px){
-  .tile-grid,.page-head,.project{margin-top:28px}
+  .feed,.page-head,.project{margin-top:28px}
   .about{margin-top:28px}
   .empty{margin-top:20vh}
 }
@@ -149,11 +146,9 @@ function shuffled(arr) {
 function renderHome() {
   const feed = shuffled(CATEGORIES.flatMap(c => c.images.filter(i => !i.homeHidden)));
   app.innerHTML = `
-    <section class="tile-grid">
+    <section class="feed">
       ${feed.map((i,k) => `
-        <a href="#" data-lb="${k}">
-          <div class="fr">${im(i, `Slowp Studio ${pad(k+1)}`)}</div>
-        </a>`).join("")}
+        <a href="#" data-lb="${k}">${im(i, `Slowp Studio ${pad(k+1)}`)}</a>`).join("")}
     </section>`;
   bindLightbox(feed);
 }
