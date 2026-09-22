@@ -43,12 +43,14 @@ window.CATEGORIES = [
       {
         "src": "https://images-pw.pixieset.com/elementfield/Yo57OVl/SLP07294-c0d55cab-2500.jpg",
         "w": 1000,
-        "h": 666
+        "h": 666,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/zvjKPn5/SLP07148-HDR-04b414b0-1500.jpg",
         "w": 1500,
-        "h": 1000
+        "h": 1000,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/zvjKPn5/SORAESET-30.045245-b2f5ef4d-1500.jpg",
@@ -100,7 +102,8 @@ window.CATEGORIES = [
       {
         "src": "https://images-pw.pixieset.com/elementfield/ddaKweR/KVHOTPOT-b8b45277-2500.jpg",
         "w": 1500,
-        "h": 2212
+        "h": 2212,
+        "homeHidden": true
       },
       {
         "src": "https://images-pw.pixieset.com/elementfield/OW50wEX/UntitledSession31481-4ed16e6e-2500.jpg",
