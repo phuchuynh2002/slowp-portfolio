@@ -3,42 +3,57 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lancengx Studio</title>
+<title>Slowp Studio</title>
+<meta name="description" content="Slowp Studio — F&B, product and space photography in Ho Chi Minh City.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Slowp Studio">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root{ --bg:#f6f1e6; --ink:#241f19; --mute:#978c78; --rule:#e5dcc7; --ph:#ece3cf; --gap:24px; }
 
 *{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 html,body{background:var(--bg);color:var(--ink)}
 body{font-family:"Instrument Sans","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;letter-spacing:.01em;-webkit-font-smoothing:antialiased;padding:22px var(--gap) 60px;min-height:100vh;display:flex;flex-direction:column}
 a{color:inherit;text-decoration:none}
 a:focus-visible,button:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
 img{display:block;max-width:100%;height:auto;background:var(--ph)}
-main{flex:1;display:flex;flex-direction:column}
+main{flex:1;display:flex;flex-direction:column;min-width:0}
+#app{transition:opacity .18s ease,transform .18s ease}
+#app.out{opacity:0;transform:translateY(6px)}
+
+/* scroll-reveal: fade + rise as grid/feed items enter the viewport */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.61,.36,1)}
+.rv.in{opacity:1;transform:none}
 
 /* two-column layout: vertical nav sidebar (sticky) + content, with a generous gap between them */
-.layout{display:grid;grid-template-columns:180px 1fr;gap:72px;align-items:start}
+.layout{display:grid;grid-template-columns:210px 1fr;gap:64px;align-items:start}
 .side-header{position:sticky;top:32px;display:flex;flex-direction:column;gap:48px}
-.side-header .name{font-size:17px;font-weight:500;letter-spacing:.08em}
-.side-header .site-nav{display:flex;flex-direction:column;gap:20px;font-size:14px}
+.side-header .name{font-size:20px;font-weight:600;letter-spacing:.08em}
+.side-header .site-nav{display:flex;flex-direction:column;gap:22px;font-size:16px;font-weight:500}
+.side-header .site-nav a{transition:color .2s ease}
+.side-header .site-nav a:hover{color:var(--mute)}
 .side-header .site-nav a.on{color:var(--mute)}
-.side-header .social{position:fixed;top:16px;right:16px;display:flex;gap:14px;padding:9px 16px;border-radius:999px;background:rgba(18,15,11,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#f5f2ea;z-index:16}
+.side-header .social{position:fixed;top:16px;right:16px;display:flex;gap:14px;padding:9px 16px;border-radius:999px;background:rgba(18,15,11,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#f5f2ea;font-size:13px;z-index:16}
 .side-header .social a:hover{color:#fff}
 @media (max-width:700px){
   .layout{grid-template-columns:1fr;gap:8px}
   .side-header{position:sticky;top:0;z-index:15;background:var(--bg);flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px 20px;padding:16px 0 14px;margin-bottom:0}
-  .side-header .site-nav{flex-direction:row;flex-wrap:wrap;gap:10px 14px;font-size:13px}
+  .side-header .site-nav{flex-direction:row;flex-wrap:wrap;gap:12px 18px;font-size:15px}
   .side-header .social{position:static;gap:14px;padding:0;border-radius:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;color:var(--mute)}
   .side-header .social a:hover{color:var(--ink)}
 }
 
-/* home: every image across all categories, shuffled into a single vertical column */
-.feed{margin:7vh auto 0;display:flex;flex-direction:column;gap:32px;max-width:440px}
-.feed a{display:block}
+/* home / categories feed: 3 columns masonry gallery */
+.feed{margin:7vh 0 0;columns:3;column-gap:24px}
+.feed a{display:block;break-inside:avoid;margin-bottom:24px}
 .feed img{width:100%;transition:opacity .3s}
 .feed a:hover img{opacity:.85}
+@media (max-width:900px){ .feed{columns:2} }
+@media (max-width:560px){ .feed{columns:1} }
+
 
 /* page head */
 .page-head{margin-top:7vh;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px}
@@ -48,7 +63,8 @@ main{flex:1;display:flex;flex-direction:column}
 /* masonry gallery (category) */
 .masonry{columns:3;column-gap:24px}
 .masonry a{display:block;break-inside:avoid;margin-bottom:24px}
-.masonry img{width:100%}
+.masonry img{width:100%;transition:opacity .3s}
+.masonry a:hover img{opacity:.85}
 @media (max-width:900px){ .masonry{columns:2} }
 @media (max-width:560px){ .masonry{columns:1} }
 
@@ -56,38 +72,82 @@ main{flex:1;display:flex;flex-direction:column}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px 24px}
 .grid a{display:block}
 .grid .fr{aspect-ratio:2/3;background:var(--ph);overflow:hidden}
-.grid .fr img{width:100%;height:100%;object-fit:cover}
+.grid .fr img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.22,.61,.36,1)}
+.grid a:hover .fr img{transform:scale(1.035)}
 .grid .cap{display:flex;justify-content:space-between;margin-top:8px}
 .grid .cap span+span{color:var(--mute)}
 @media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr)} }
 @media (max-width:560px){ .grid{grid-template-columns:1fr} }
 
-/* project */
-.project{margin-top:7vh;display:grid;grid-template-columns:240px 1fr;gap:48px;align-items:start}
-.project .meta{position:sticky;top:22px}
-.project h1{font-size:12px;font-weight:500;margin-bottom:2px}
-.project .sub{color:var(--mute);margin-bottom:22px}
-.project .desc{max-width:34ch;margin-bottom:22px}
-.project dl{display:grid;grid-template-columns:auto 1fr;gap:3px 16px;color:var(--mute)}
+/* project detail layout */
+.project{margin-top:7vh;display:grid;grid-template-columns:220px 1fr;gap:56px;align-items:start}
+.project .meta{position:sticky;top:32px}
+.project h1{font-size:20px;font-weight:600;margin-bottom:6px;line-height:1.3;letter-spacing:-.01em}
+.project .sub{color:var(--mute);margin-bottom:20px;font-size:13px}
+.project .desc{max-width:32ch;margin-bottom:24px;font-size:13px;line-height:1.6}
+.project dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;color:var(--mute);font-size:12px;margin-bottom:24px}
 .project dd{color:var(--ink)}
-.project .pn{margin-top:40px;display:flex;flex-direction:column;gap:4px;color:var(--mute)}
+.project .pn{margin-top:32px;padding-top:20px;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--mute)}
+.project .pn a{transition:color .2s ease}
 .project .pn a:hover{color:var(--ink)}
-.frames{display:grid;grid-template-columns:1fr 1fr;gap:32px 24px;max-width:1100px;align-items:start}
-.frames img{width:100%}
-.frames .w{grid-column:1/-1}
-@media (max-width:900px){ .project{grid-template-columns:1fr;gap:32px} .project .meta{position:static} }
-@media (max-width:560px){ .frames{grid-template-columns:1fr} }
+.frames{columns:2;column-gap:20px;max-width:840px}
+.frames a{display:block;break-inside:avoid;margin-bottom:20px;overflow:hidden;border-radius:2px}
+.frames img{width:100%;height:auto;display:block;transition:transform .4s cubic-bezier(.22,.61,.36,1),opacity .25s ease}
+.frames a:hover img{transform:scale(1.025);opacity:.9}
+@media (max-width:900px){ .project{grid-template-columns:1fr;gap:32px} .project .meta{position:static} .frames{max-width:100%} }
+@media (max-width:560px){ .frames{columns:1} }
 
-/* about / contact */
-.about{margin-top:9vh;max-width:56ch}
-.about p+p{margin-top:1em}
-.about .links{margin-top:32px;display:flex;flex-direction:column;gap:4px;color:var(--mute)}
-.about .links a:hover{color:var(--ink)}
+
+/* about / contact: built on the same .project two-column grid (sticky .meta + right content)
+   as the project detail page, so proportions, type and responsive collapse match exactly */
+.about-portrait{margin-bottom:24px;width:100%;aspect-ratio:3/4;background:var(--ph);overflow:hidden}
+.about-portrait img{width:100%;height:100%;object-fit:cover}
+.about-page{grid-template-columns:300px minmax(0,1fr);gap:72px}
+.about-body{display:flex;flex-direction:column;justify-content:space-between;gap:48px;max-width:620px}
+.about-page{align-items:stretch}
+.about-page .meta{top:32px;align-self:start}
+.about-text p{font-size:15px;line-height:1.7;margin-bottom:18px}
+.about-text p:first-child{font-size:17px;line-height:1.55;margin-top:-3px}
+.about-services h2,.brands h2{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:12px}
+.about-page .services{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:0;padding-top:16px;border-top:1px solid var(--rule);color:var(--ink)}
+.about-page .services dt{font-size:13px}
+.about-page .services dd{color:var(--mute);font-size:12px;margin-top:4px}
+.brands{margin-top:9vh;margin-bottom:4vh;padding-top:20px;border-top:1px solid var(--rule)}
+.marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marquee .track{display:flex;width:max-content;animation:marquee 45s linear infinite;animation-play-state:running!important}
+.marquee .set{display:flex;flex-shrink:0}
+.marquee span{font-size:clamp(16px,1.9vw,26px);font-weight:500;letter-spacing:.02em;line-height:1.4;white-space:nowrap;padding-right:1.2em;color:var(--ink)}
+.marquee span::after{content:"\2022";margin-left:1.2em;color:var(--mute);font-size:.5em;vertical-align:middle}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){ .marquee .track{animation:none!important;flex-wrap:wrap;width:auto} .marquee .set+.set{display:none} }
+.clients{margin-top:28px;padding-top:20px;border-top:1px solid var(--rule)}
+.clients h2{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:10px}
+.clients .list{display:flex;flex-wrap:wrap;gap:7px 16px;font-size:13px;color:var(--mute)}
+
+.about-cta{margin-top:28px;font-size:13px}
+.about-cta a{border-bottom:1px solid var(--ink);padding-bottom:2px;transition:color .2s ease,border-color .2s ease}
+.about-cta a:hover{color:var(--mute);border-color:var(--mute)}
+@media (max-width:900px){ .about-page{grid-template-columns:1fr;gap:32px} .about-portrait{max-width:260px} }
+@media (max-width:700px){ .about-portrait{max-width:200px} .about-page .services{grid-template-columns:1fr} .about-body{gap:32px} .brands{margin-top:48px} .marquee .track{animation-duration:28s} }
+
+.contact-page dl{margin-top:4px}
+.contact-page dd a:hover{color:var(--mute)}
+.fields{display:flex;flex-direction:column;gap:20px;max-width:420px}
+.fields label{display:flex;flex-direction:column;gap:6px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.fields input,.fields textarea{font:inherit;font-size:13px;color:var(--ink);background:none;border:0;border-bottom:1px solid var(--rule);padding:8px 2px;resize:vertical;transition:border-color .2s ease}
+.fields input:focus,.fields textarea:focus{outline:none;border-color:var(--ink)}
+.fields button{align-self:flex-start;margin-top:4px;padding:10px 24px;border:1px solid var(--ink);font-size:12px;letter-spacing:.04em;transition:background .2s ease,color .2s ease}
+.fields button:hover{background:var(--ink);color:var(--bg)}
+.fields button:disabled{opacity:.5;cursor:default}
+.form-note{font-size:12px;color:var(--mute);min-height:1.4em}
+@media (max-width:900px){ .fields{max-width:100%} }
 
 /* lightbox */
-.lb{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:30;cursor:zoom-out}
-.lb.show{display:flex}
-.lb img{max-width:calc(100vw - 48px);max-height:calc(100vh - 48px);width:auto;height:auto;background:none;pointer-events:none}
+.lb{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:30;cursor:zoom-out;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .25s ease}
+.lb.show{opacity:1;visibility:visible;pointer-events:auto}
+.lb img{max-width:calc(100vw - 48px);max-height:calc(100vh - 48px);width:auto;height:auto;background:none;pointer-events:none;transform:scale(.97);transition:transform .25s ease}
+.lb.show img{transform:scale(1)}
 .lb .n{position:absolute;top:22px;left:24px;color:var(--mute)}
 .lb .x{position:absolute;top:14px;right:20px;font-size:26px;line-height:1;color:var(--mute);padding:8px;cursor:pointer}
 .lb .x:hover{color:var(--ink)}
@@ -98,7 +158,6 @@ main{flex:1;display:flex;flex-direction:column}
 /* mobile: the generous desktop top spacing (7-12vh) reads as dead space on short screens */
 @media (max-width:700px){
   .feed,.page-head,.project{margin-top:28px}
-  .about{margin-top:28px}
   .empty{margin-top:20vh}
 }
 </style>
@@ -133,6 +192,17 @@ document.getElementById("siteName").textContent = SITE.name.toUpperCase();
 document.getElementById("social").innerHTML = SITE.social.map(([l,h]) => `<a href="${esc(h)}" target="_blank" rel="noopener">${esc(l)}</a>`).join("");
 document.title = SITE.name;
 
+/* scroll-reveal: staggered fade-in as .rv items enter the viewport */
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); revealObserver.unobserve(e.target); } });
+}, { rootMargin: "0px 0px -8% 0px", threshold: .01 });
+function reveal() {
+  app.querySelectorAll(".rv").forEach((el, k) => {
+    el.style.transitionDelay = `${Math.min((k % 6) * 60, 300)}ms`;
+    revealObserver.observe(el);
+  });
+}
+
 function shuffled(arr) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
@@ -148,9 +218,10 @@ function renderHome() {
   app.innerHTML = `
     <section class="feed">
       ${feed.map((i,k) => `
-        <a href="#" data-lb="${k}">${im(i, `Slowp Studio ${pad(k+1)}`)}</a>`).join("")}
+        <a href="#" class="rv" data-lb="${k}">${im(i, `Slowp Studio ${pad(k+1)}`)}</a>`).join("")}
     </section>`;
   bindLightbox(feed);
+  reveal();
 }
 
 /* category: masonry gallery with lightbox */
@@ -159,8 +230,9 @@ function renderCategory(slug) {
   if (!c) return notFound();
   app.innerHTML = `
     <div class="page-head"><h1>${esc(c.name)}</h1><span>${c.images.length} images</span></div>
-    <div class="masonry">${c.images.map((i,k) => `<a href="#" data-lb="${k}">${im(i, `${c.name} ${pad(k+1)}`)}</a>`).join("")}</div>`;
+    <div class="masonry">${c.images.map((i,k) => `<a href="#" class="rv" data-lb="${k}">${im(i, `${c.name} ${pad(k+1)}`)}</a>`).join("")}</div>`;
   bindLightbox(c.images, c.name);
+  reveal();
 }
 
 /* all projects */
@@ -168,10 +240,11 @@ function renderProjects() {
   app.innerHTML = `
     <div class="page-head"><h1>Projects</h1><span>${PROJECTS.length}</span></div>
     <div class="grid">${PROJECTS.map(p => `
-      <a href="#/work/${p.slug}">
+      <a href="#/work/${p.slug}" class="rv">
         <div class="fr"><img src="${esc(p.cover)}" alt="${esc(p.title)}" loading="lazy"></div>
         <div class="cap"><span>${esc(p.title)}</span><span>${p.year || ""}</span></div>
       </a>`).join("")}</div>`;
+  reveal();
 }
 
 /* one project */
@@ -197,22 +270,122 @@ function renderProject(slug) {
         </div>
       </div>
       <div class="frames">${p.images.map((img,k) =>
-        `<a href="#" data-lb="${k}" class="${img.w > img.h ? "w" : ""}">${im(img, `${p.title} ${pad(k+1)}`)}</a>`).join("")}</div>
+        `<a href="#" data-lb="${k}" class="rv ${img.w > img.h ? "w" : ""}">${im(img, `${p.title} ${pad(k+1)}`)}</a>`).join("")}</div>
     </article>`;
   bindLightbox(p.images, p.title);
+  reveal();
 }
 
+/* about: left = portrait + name + CTA (sticky .meta), right = bio + services;
+   below, a full-width right-to-left brand marquee (text only, no images) */
 function renderAbout() {
-  app.innerHTML = `<section class="about">${SITE.about.map(t => `<p>${esc(t)}</p>`).join("")}</section>`;
+  const clients = SITE.clients && SITE.clients.length
+    ? SITE.clients
+    : [...new Set(PROJECTS.map(p => p.client || p.title).filter(Boolean))];
+  const services = SITE.services || [];
+  /* one marquee "set" repeats the brand list enough to be wider than any screen; the track holds two identical sets for a seamless -50% loop */
+  const reps = Math.max(2, Math.ceil(12 / Math.max(clients.length, 1)));
+  const set = Array.from({length: reps}, () => clients.map(c => `<span>${esc(c)}</span>`).join("")).join("");
+  app.innerHTML = `
+    <article class="project about-page">
+      <div class="meta">
+        ${SITE.portrait ? `<div class="about-portrait">${im({src: SITE.portrait, w: 3, h: 4}, "Portrait of " + SITE.name + ", photographer in Ho Chi Minh City", 'fetchpriority="high"').replace('loading="lazy"', 'loading="eager"')}</div>` : ""}
+        <h1>${esc(SITE.name)}</h1>
+        <p class="sub">${esc(SITE.tagline || "")}</p>
+        <p class="about-cta"><a href="#/contact">${esc(SITE.about_cta || "Contact")} →</a></p>
+      </div>
+      <div class="about-body">
+        <div class="about-text">${SITE.about.map(t => `<p>${esc(t)}</p>`).join("")}</div>
+        ${services.length ? `
+        <div class="about-services">
+          <h2>Services</h2>
+          <dl class="services">${services.map(([t,d]) => `<div><dt>${esc(t)}</dt><dd>${esc(d)}</dd></div>`).join("")}</dl>
+        </div>` : ""}
+      </div>
+    </article>
+    ${clients.length ? `
+    <section class="brands" aria-label="Brands we have worked with">
+      <h2>Worked with</h2>
+      <div class="marquee" aria-hidden="true"><div class="track"><div class="set">${set}</div><div class="set">${set}</div></div></div>
+      <p class="sr-only">${clients.map(esc).join(", ")}</p>
+    </section>` : ""}`;
+  setSeo("About — " + SITE.name, SITE.seo_description || (SITE.about[0] || ""), personSchema());
+  reveal();
 }
+
+/* SEO: per-route <title>, meta description, canonical + JSON-LD (hash-routed SPA) */
+function setMeta(sel, attr, key, val) {
+  let el = document.head.querySelector(sel);
+  if (!el) { el = document.createElement(sel.startsWith("link") ? "link" : "meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
+  el.setAttribute(sel.startsWith("link") ? "href" : "content", val);
+}
+function setSeo(title, desc, schema) {
+  document.title = title;
+  setMeta('meta[name="description"]', "name", "description", desc);
+  setMeta('meta[property="og:title"]', "property", "og:title", title);
+  setMeta('meta[property="og:description"]', "property", "og:description", desc);
+  if (SITE.portrait) setMeta('meta[property="og:image"]', "property", "og:image", new URL(SITE.portrait, SITE.url || location.href).href);
+  if (SITE.url) setMeta('link[rel="canonical"]', "rel", "canonical", SITE.url.replace(/\/$/, "") + "/" + location.hash);
+  let ld = document.getElementById("ld");
+  if (!schema) { if (ld) ld.remove(); return; }
+  if (!ld) { ld = document.createElement("script"); ld.id = "ld"; ld.type = "application/ld+json"; document.head.appendChild(ld); }
+  ld.textContent = JSON.stringify(schema);
+}
+function personSchema() {
+  return {
+    "@context": "https://schema.org", "@type": "Person",
+    name: SITE.name, jobTitle: SITE.job_title || "Photographer",
+    description: SITE.seo_description || SITE.about[0],
+    image: SITE.portrait ? new URL(SITE.portrait, SITE.url || location.href).href : undefined,
+    url: SITE.url || undefined,
+    homeLocation: SITE.area ? { "@type": "Place", name: SITE.area } : undefined,
+    knowsAbout: (SITE.services || []).map(s => s[0]),
+    sameAs: SITE.social.map(s => s[1])
+  };
+}
+
+/* contact: identical grid — left meta (note + email/phone as dl, socials as pn),
+   right column holds the form in place of frames */
 function renderContact() {
-  app.innerHTML = `<section class="about">
-    <p>${esc(SITE.contact_note)}</p>
-    <div class="links">
-      ${SITE.email ? `<a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>` : ""}
-      ${SITE.phone ? `<a href="tel:${esc(SITE.phone.replace(/\s/g,""))}">${esc(SITE.phone)}</a>` : ""}
-      ${SITE.social.map(([l,h]) => `<a href="${esc(h)}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}
-    </div></section>`;
+  app.innerHTML = `
+    <article class="project contact-page">
+      <div class="meta">
+        <h1>Contact</h1>
+        <p class="sub">${esc(SITE.contact_note)}</p>
+        ${(SITE.email || SITE.phone) ? `<dl>
+          ${SITE.email ? `<dt>Email</dt><dd><a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a></dd>` : ""}
+          ${SITE.phone ? `<dt>Phone</dt><dd><a href="tel:${esc(SITE.phone.replace(/\s/g,""))}">${esc(SITE.phone)}</a></dd>` : ""}
+        </dl>` : ""}
+        <div class="pn">
+          ${SITE.social.map(([l,h]) => `<a href="${esc(h)}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}
+        </div>
+      </div>
+      <form class="fields">
+        <label>Name<input type="text" name="name" autocomplete="name" required></label>
+        <label>Email<input type="email" name="email" autocomplete="email" required></label>
+        <label>Message<textarea name="message" rows="5" required></textarea></label>
+        <button type="submit">Send</button>
+        <p class="form-note"></p>
+      </form>
+    </article>`;
+  bindContactForm();
+  reveal();
+}
+function bindContactForm() {
+  const form = app.querySelector(".fields");
+  if (!form) return;
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const note = form.querySelector(".form-note"), btn = form.querySelector("button");
+    if (!SITE.formspree) { note.textContent = "Contact form chưa được cấu hình — vui lòng liên hệ qua mạng xã hội."; return; }
+    btn.disabled = true; note.textContent = "Đang gửi…";
+    try {
+      const res = await fetch(SITE.formspree, { method: "POST", headers: { Accept: "application/json" }, body: new FormData(form) });
+      if (res.ok) { note.textContent = "Đã gửi, cảm ơn bạn! Mình sẽ phản hồi sớm nhất."; form.reset(); }
+      else { note.textContent = "Gửi thất bại, vui lòng thử lại."; }
+    } catch { note.textContent = "Gửi thất bại, vui lòng thử lại."; }
+    btn.disabled = false;
+  });
 }
 function notFound() { app.innerHTML = `<p class="empty">Page not found. <a href="#/">Home</a></p>`; }
 
@@ -254,17 +427,24 @@ addEventListener("keydown", e => {
   if (e.key === "ArrowLeft" && lbIdx > 0) openLb(lbIdx-1);
 });
 
+let firstRoute = true;
 function route() {
   const [seg, slug] = location.hash.replace(/^#\/?/, "").split("/");
   document.onkeydown = null; closeLb();
   document.querySelectorAll("[data-nav]").forEach(a => a.classList.toggle("on", a.dataset.nav === (seg || "home")));
-  if (seg === "category" && slug) renderCategory(slug);
-  else if (seg === "work" && slug) renderProject(slug);
-  else if (seg === "projects") renderProjects();
-  else if (seg === "about") renderAbout();
-  else if (seg === "contact") renderContact();
-  else renderHome();
-  scrollTo(0,0);
+  const go = () => {
+    setSeo(SITE.name, SITE.seo_description || SITE.tagline || "", null); /* reset; renderAbout overrides */
+    if (seg === "category" && slug) renderCategory(slug);
+    else if (seg === "work" && slug) renderProject(slug);
+    else if (seg === "projects") renderProjects();
+    else if (seg === "about") renderAbout();
+    else if (seg === "contact") renderContact();
+    else renderHome();
+    scrollTo(0,0);
+    requestAnimationFrame(() => app.classList.remove("out"));
+  };
+  if (firstRoute) { firstRoute = false; go(); }
+  else { app.classList.add("out"); setTimeout(go, 150); }
 }
 addEventListener("hashchange", route);
 route();
