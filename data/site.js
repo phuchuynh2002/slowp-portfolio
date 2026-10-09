@@ -2,7 +2,7 @@
 window.SITE = {
   "name": "Slowp Studio",
   "tagline": "FNB & Lifestyle Photography — Hồ Chí Minh City",
-  "email": "",
+  "email": "p.huynhthien2208@gmail.com",
   "phone": "",
   // ảnh chân dung — lấy từ trang About gốc (slowp2608.mypixieset.com)
   "portrait": "images/about/portrait.jpg",
@@ -28,7 +28,7 @@ window.SITE = {
   "clients": ["Demi Lune", "Chay Tuệ Garden", "Véritée Patisserie", "Tiệm Cafe"],
   // ---- SEO & trang About (sửa tại đây, không cần đụng index.html) ----
   // URL thật của site sau khi deploy (dùng cho canonical / Open Graph / schema). Để trống nếu chưa có.
-  "url": "",
+  "url": "https://phuchuynh2002.github.io/slowp-portfolio/",
   "seo_description": "Slowp Studio — nhiếp ảnh gia F&B, sản phẩm và không gian tại Sài Gòn. Hình ảnh nhà hàng, café, thương hiệu với ánh sáng và bố cục chỉn chu.",
   "job_title": "Commercial Photographer",
   "area": "Ho Chi Minh City, Vietnam",
