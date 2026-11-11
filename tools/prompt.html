@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Prompt studio — Slowp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{ --bg:#f6f1e6; --ink:#241f19; --mute:#978c78; --rule:#e5dcc7; --ph:#ece3cf; --gap:24px; --err:#a4452c; }
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:"Instrument Sans","Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;letter-spacing:.01em;-webkit-font-smoothing:antialiased;padding:22px var(--gap) 80px;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:1px solid var(--ink);outline-offset:3px}
+img{display:block;max-width:100%;height:auto;background:var(--ph)}
+input,textarea,select{font:inherit;font-size:13px;color:var(--ink);background:none;border:0;border-bottom:1px solid var(--rule);padding:8px 2px;width:100%;border-radius:0;transition:border-color .2s ease}
+textarea{resize:vertical;line-height:1.6}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--ink)}
+::placeholder{color:var(--mute);opacity:.8}
+
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:20px}
+.top .name{font-size:20px;font-weight:600;letter-spacing:.08em}
+.top .back{color:var(--mute);font-size:13px}
+.top .back:hover{color:var(--ink)}
+
+.studio{margin-top:7vh;display:grid;grid-template-columns:340px minmax(0,1fr);gap:64px;align-items:start}
+h1{font-size:20px;font-weight:600;letter-spacing:-.01em;margin-bottom:6px}
+.sub{color:var(--mute);font-size:13px;margin-bottom:28px}
+h2,.lbl{display:block;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-bottom:8px}
+
+.block{margin-bottom:22px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{padding:5px 11px;border:1px solid var(--rule);border-radius:999px;font-size:12px;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.chips button:hover{border-color:var(--ink)}
+.chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+
+.btn{padding:10px 22px;border:1px solid var(--ink);font-size:12px;letter-spacing:.04em;white-space:nowrap;transition:background .2s ease,color .2s ease}
+.btn:hover,.btn.solid{background:var(--ink);color:var(--bg)}
+.btn.solid:hover{opacity:.85}
+.btn:disabled{opacity:.45;cursor:default}
+.link{color:var(--mute);border-bottom:1px solid var(--rule);padding-bottom:1px;font-size:12px}
+.link:hover{color:var(--ink);border-color:var(--ink)}
+.link:disabled{opacity:.4;cursor:default}
+
+.work{max-width:860px}
+.work section{padding-bottom:28px;margin-bottom:28px;border-bottom:1px solid var(--rule)}
+.work section:last-child{border-bottom:0}
+.head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:8px}
+.head h2{margin:0}
+.head .acts{display:flex;gap:16px}
+#prompt{font-size:15px;line-height:1.65;min-height:150px;border:1px solid var(--rule);padding:14px 16px}
+.note{font-size:12px;color:var(--mute);min-height:1.5em;margin-top:8px}
+.note.err{color:var(--err)}
+.row{display:flex;gap:14px;align-items:flex-end}
+.row>.grow{flex:1;min-width:0}
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:18px}
+
+.refs{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px}
+.refs .ref{position:relative;width:64px;height:64px}
+.refs .ref img{width:100%;height:100%;object-fit:cover}
+.refs .ref button{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:12px;line-height:18px}
+.refs label{cursor:pointer}
+.refs input{display:none}
+
+.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.results figure{min-width:0}
+.results img{width:100%}
+.results .ph{background:var(--ph);display:flex;align-items:center;justify-content:center;color:var(--mute);animation:pulse 1.6s ease-in-out infinite}
+.results .ph.fail{animation:none;color:var(--err);padding:16px;text-align:center}
+.results figcaption{display:flex;gap:16px;margin-top:8px}
+@keyframes pulse{50%{opacity:.55}}
+.empty{color:var(--mute)}
+
+details{margin-top:28px;padding-top:18px;border-top:1px solid var(--rule)}
+summary{cursor:pointer;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:" +"}
+details[open] summary::after{content:" –"}
+details .block{margin:16px 0 0}
+details p{color:var(--mute);margin-top:12px}
+details p a{border-bottom:1px solid var(--rule)}
+.hist{list-style:none;margin-top:10px}
+.hist li{padding:8px 0;border-bottom:1px solid var(--rule)}
+.hist button{text-align:left;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hist button:hover{color:var(--mute)}
+
+@media (max-width:900px){ .studio{grid-template-columns:1fr;gap:36px;margin-top:28px} }
+@media (max-width:560px){ .results{grid-template-columns:1fr} .opts{grid-template-columns:1fr 1fr} .row{flex-direction:column;align-items:stretch} }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="name" href="../index.html">SLOWP</a>
+  <a class="back" href="../index.html">← Về portfolio</a>
+</header>
+
+<div class="studio">
+  <aside>
+    <h1>Prompt studio</h1>
+    <p class="sub">Dựng prompt, chỉnh theo ý, rồi tạo hình bằng Gemini.</p>
+
+    <div class="block">
+      <label class="lbl" for="subject">Chủ thể</label>
+      <textarea id="subject" rows="2" placeholder="vd. a bowl of phở with fresh herbs and lime"></textarea>
+    </div>
+    <div id="groups"></div>
+    <div class="block">
+      <label class="lbl" for="extra">Chi tiết thêm</label>
+      <textarea id="extra" rows="2" placeholder="vd. steam rising, a linen napkin on the left"></textarea>
+    </div>
+
+    <details id="settings">
+      <summary>Cài đặt API</summary>
+      <div class="block">
+        <label class="lbl" for="key">Gemini API key</label>
+        <input id="key" type="password" autocomplete="off" spellcheck="false" placeholder="Dán key vào đây">
+      </div>
+      <div class="block">
+        <label class="lbl" for="textModel">Model viết prompt</label>
+        <input id="textModel" spellcheck="false">
+      </div>
+      <p>Key chỉ lưu trong trình duyệt này (localStorage) và chỉ gửi thẳng tới Google. Lấy key tại <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener">aistudio.google.com/api-keys</a>.</p>
+    </details>
+
+    <details id="histBox">
+      <summary>Prompt đã dùng</summary>
+      <ul class="hist" id="hist"></ul>
+    </details>
+  </aside>
+
+  <main class="work">
+    <section>
+      <div class="head">
+        <h2><label for="prompt">Prompt</label></h2>
+        <div class="acts">
+          <button class="link" id="recompose" title="Ghi đè prompt bằng các lựa chọn bên trái">Ghép lại từ lựa chọn</button>
+          <button class="link" id="undo" disabled>Hoàn tác</button>
+          <button class="link" id="copy">Copy</button>
+        </div>
+      </div>
+      <textarea id="prompt" spellcheck="false"></textarea>
+      <p class="note" id="promptNote"></p>
+
+      <div class="row" style="margin-top:14px">
+        <div class="grow">
+          <label class="lbl" for="ask">Nhờ AI chỉnh prompt</label>
+          <input id="ask" placeholder="vd. ấm hơn, thêm khói, bố cục thoáng hơn — để trống = viết chi tiết hơn">
+        </div>
+        <button class="btn" id="rewrite">AI viết lại</button>
+      </div>
+    </section>
+
+    <section>
+      <div class="opts">
+        <div><label class="lbl" for="ratio">Tỉ lệ</label>
+          <select id="ratio"></select></div>
+        <div><label class="lbl" for="size">Kích thước</label>
+          <select id="size"><option>1K</option><option>2K</option><option>4K</option></select></div>
+        <div><label class="lbl" for="count">Số ảnh</label>
+          <select id="count"><option>1</option><option>2</option><option>4</option></select></div>
+        <div style="grid-column:1/-1"><label class="lbl" for="imageModel">Model tạo hình</label>
+          <select id="imageModel">
+            <option value="gemini-nano-banana-2.1">Nano Banana 2.1 — nhanh, mặc định</option>
+            <option value="gemini-3-pro-image">Nano Banana Pro — chất lượng cao nhất</option>
+            <option value="gemini-3.1-flash-lite-image">Nano Banana 2 Lite — rẻ nhất</option>
+          </select></div>
+      </div>
+
+      <span class="lbl">Ảnh tham chiếu (tuỳ chọn)</span>
+      <div class="refs" id="refs">
+        <label class="link">+ Thêm ảnh<input id="refInput" type="file" accept="image/*" multiple></label>
+      </div>
+
+      <div class="row">
+        <button class="btn solid" id="generate">Tạo hình</button>
+        <p class="note grow" id="genNote" style="margin:0"></p>
+      </div>
+    </section>
+
+    <section>
+      <div class="head"><h2>Kết quả</h2></div>
+      <div class="results" id="results"></div>
+      <p class="empty" id="empty">Chưa có ảnh nào. Ảnh chỉ nằm trong tab này — nhớ tải về trước khi đóng.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+const API = "https://generativelanguage.googleapis.com/v1beta/interactions";
+const $ = id => document.getElementById(id);
+
+/* ---------- prompt builder: [label shown, English phrase put in the prompt] ---------- */
+const GROUPS = [
+  { id:"type", label:"Thể loại", opts:[
+    ["Món ăn","food photograph"],["Đồ uống","beverage photograph"],["Sản phẩm","product photograph"],
+    ["Không gian","interior photograph"],["Chân dung","portrait photograph"] ]},
+  { id:"angle", label:"Góc máy", opts:[
+    ["Top-down","shot from directly overhead as a flat lay"],["45°","shot from a 45-degree angle"],
+    ["Ngang tầm mắt","shot straight-on at eye level"],["Cận cảnh","as an extreme close-up"],
+    ["Toàn cảnh","as a wide shot showing the surrounding scene"] ]},
+  { id:"light", label:"Ánh sáng", opts:[
+    ["Cửa sổ mềm","soft diffused natural window light from the side"],
+    ["Nắng gắt","hard direct sunlight with crisp, defined shadows"],
+    ["Ngược sáng","backlighting with a gentle glowing rim"],
+    ["Studio softbox","clean, even studio softbox lighting"],
+    ["Tối, moody","low-key moody lighting with deep shadows"],
+    ["Giờ vàng","warm golden-hour light"] ]},
+  { id:"lens", label:"Ống kính", opts:[
+    ["24mm rộng","24mm wide-angle lens"],["35mm","35mm lens"],["50mm","50mm lens"],
+    ["85mm f/1.8","85mm lens at f/1.8 with shallow depth of field"],["100mm macro","100mm macro lens"] ]},
+  { id:"surface", label:"Bề mặt / nền", opts:[
+    ["Gỗ mộc","on a weathered wooden table"],["Đá marble","on a white marble surface"],
+    ["Vải linen","on a wrinkled natural linen cloth"],["Bê tông","on a raw concrete surface"],
+    ["Nền kem trơn","against a seamless warm cream backdrop"],["Nền tối","against a dark charcoal backdrop"] ]},
+  { id:"mood", label:"Màu & mood", opts:[
+    ["Ấm, kem","warm, muted cream and earth tones"],["Trong, sáng","bright, airy and clean colors"],
+    ["Đậm, tương phản","rich saturated colors with strong contrast"],["Mát, tĩnh","cool, calm desaturated tones"],
+    ["Màu film","soft film-like color with gentle faded blacks"] ]},
+  { id:"style", label:"Phong cách", multi:true, opts:[
+    ["Tối giản","minimalist composition with generous negative space"],["Editorial","editorial magazine style"],
+    ["Film grain","subtle analog film grain"],["Đời thường","candid, lived-in feel with natural imperfections"],
+    ["Có bàn tay","a hand reaching into the frame"] ]},
+];
+const RATIOS = ["4:5","3:4","2:3","1:1","5:4","4:3","3:2","16:9","9:16","21:9"];
+
+const sel = {};                 // group id -> phrase, or Set of phrases for multi groups
+let dirty = false;              // true once the prompt was edited by hand or by AI
+const undoStack = [];
+const refs = [];                // [{mime, data, url}]
+
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+function compose() {
+  const subject = $("subject").value.trim();
+  if (!subject && !Object.keys(sel).some(k => sel[k] && (sel[k].size ?? 1))) return "";
+  let s = `A photorealistic ${sel.type || "photograph"} of ${subject || "[chủ thể]"}`;
+  if (sel.surface) s += ` ${sel.surface}`;
+  if (sel.angle) s += `, ${sel.angle}`;
+  s += ".";
+  if (sel.light) s += ` Lit by ${sel.light}.`;
+  if (sel.lens) s += ` Shot on ${/^8/.test(sel.lens) ? "an" : "a"} ${sel.lens}.`;
+  if (sel.mood) s += ` ${cap(sel.mood)}.`;
+  if (sel.style && sel.style.size) s += ` ${cap([...sel.style].join(", "))}.`;
+  const extra = $("extra").value.trim();
+  if (extra) s += ` ${cap(extra)}${/[.!?]$/.test(extra) ? "" : "."}`;
+  return s;
+}
+
+function builderChanged() {
+  if (dirty) { note("promptNote", "Prompt đã được sửa — bấm “Ghép lại từ lựa chọn” nếu muốn ghi đè."); return; }
+  $("prompt").value = compose();
+}
+
+function setPrompt(text, keepUndo = true) {
+  const p = $("prompt");
+  if (keepUndo && p.value.trim() && p.value !== text) { undoStack.push(p.value); $("undo").disabled = false; }
+  p.value = text;
+}
+
+function note(id, msg, isErr = false) {
+  const el = $(id); el.textContent = msg; el.classList.toggle("err", isErr);
+}
+
+/* ---------- render builder ---------- */
+$("groups").append(...GROUPS.map(g => {
+  const block = document.createElement("div"); block.className = "block";
+  const h = document.createElement("span"); h.className = "lbl"; h.textContent = g.label;
+  const chips = document.createElement("div"); chips.className = "chips";
+  if (g.multi) sel[g.id] = new Set();
+  g.opts.forEach(([label, phrase]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = label; b.setAttribute("aria-pressed", "false");
+    b.onclick = () => {
+      const on = b.getAttribute("aria-pressed") !== "true";
+      if (g.multi) { on ? sel[g.id].add(phrase) : sel[g.id].delete(phrase); }
+      else {
+        chips.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", "false"));
+        sel[g.id] = on ? phrase : null;
+      }
+      b.setAttribute("aria-pressed", String(on));
+      builderChanged();
+    };
+    chips.append(b);
+  });
+  block.append(h, chips);
+  return block;
+}));
+$("ratio").append(...RATIOS.map(r => new Option(r, r)));
+$("subject").oninput = $("extra").oninput = builderChanged;
+$("prompt").oninput = () => { dirty = true; };
+$("recompose").onclick = () => { setPrompt(compose()); dirty = false; note("promptNote", ""); };
+$("undo").onclick = () => {
+  if (undoStack.length) { $("prompt").value = undoStack.pop(); dirty = true; }
+  $("undo").disabled = !undoStack.length;
+};
+$("copy").onclick = async () => {
+  try { await navigator.clipboard.writeText($("prompt").value); note("promptNote", "Đã copy."); }
+  catch { $("prompt").select(); note("promptNote", "Không copy tự động được — đã bôi đen, bấm ⌘C."); }
+};
+
+/* ---------- settings + history (localStorage, this browser only) ---------- */
+const store = {
+  get: (k, d) => { try { return localStorage.getItem("slowp." + k) ?? d; } catch { return d; } },
+  set: (k, v) => { try { localStorage.setItem("slowp." + k, v); } catch {} },
+};
+$("key").value = store.get("key", "");
+$("textModel").value = store.get("textModel", "gemini-flash-latest");
+["imageModel", "ratio", "size", "count"].forEach(id => {
+  const v = store.get(id, ""); if (v && [...$(id).options].some(o => o.value === v)) $(id).value = v;
+  $(id).onchange = () => store.set(id, $(id).value);
+});
+$("key").onchange = () => store.set("key", $("key").value.trim());
+$("textModel").onchange = () => store.set("textModel", $("textModel").value.trim());
+
+function history() { try { return JSON.parse(store.get("history", "[]")); } catch { return []; } }
+function remember(prompt) {
+  const list = [prompt, ...history().filter(p => p !== prompt)].slice(0, 20);
+  store.set("history", JSON.stringify(list)); renderHistory();
+}
+function renderHistory() {
+  const list = history();
+  $("histBox").hidden = !list.length;
+  $("hist").replaceChildren(...list.map(p => {
+    const li = document.createElement("li"), b = document.createElement("button");
+    b.textContent = p; b.title = "Dùng lại prompt này";
+    b.onclick = () => { setPrompt(p); dirty = true; window.scrollTo({ top: 0, behavior: "smooth" }); };
+    li.append(b); return li;
+  }));
+}
+renderHistory();
+
+/* ---------- Gemini Interactions API ---------- */
+function needKey() {
+  const key = $("key").value.trim();
+  if (!key) { $("settings").open = true; $("key").focus(); throw new Error("Chưa có API key — dán key vào phần Cài đặt API."); }
+  return key;
+}
+async function gemini(body) {
+  const key = needKey();
+  let res;
+  try {
+    res = await fetch(API, {
+      method: "POST",
+      headers: { "x-goog-api-key": key, "Content-Type": "application/json" },   // no other headers: Google's CORS preflight rejects them
+      body: JSON.stringify({ store: false, ...body }),
+    });
+  } catch { throw new Error("Không kết nối được tới Google — kiểm tra mạng."); }
+  const json = await res.json().catch(() => ({}));
+  const err = (Array.isArray(json) ? json[0] : json)?.error;      // auth errors arrive wrapped in an array
+  if (!res.ok || err) throw new Error(err?.message || `Lỗi ${res.status}`);
+  // current responses put content in steps[].content; older API revisions used a flat outputs[]
+  const blocks = [...(json.steps || []).filter(s => s.type === "model_output").flatMap(s => s.content || []), ...(json.outputs || [])];
+  return {
+    text: blocks.filter(b => b.type === "text").map(b => b.text).join("").trim(),
+    image: blocks.filter(b => b.type === "image" && b.data).pop(),
+  };
+}
+
+const WRITER = `You write prompts for a photorealistic image generation model on behalf of a professional food, product and space photographer.
+Return ONLY the final prompt: one paragraph of plain English, no preamble, no quotes, no markdown, no options.
+Describe the scene the way a photographer would: subject and styling, surface and setting, light direction and quality, lens and depth of field, camera angle, color palette and mood. Describe what should be in the frame rather than what should not.
+When given a current prompt and a change request, apply the request and keep everything else the photographer already decided. The request may be written in Vietnamese; the prompt you return is always in English.`;
+
+$("rewrite").onclick = async () => {
+  const current = $("prompt").value.trim() || compose();
+  const ask = $("ask").value.trim();
+  if (!current && !ask) return note("promptNote", "Nhập chủ thể hoặc yêu cầu trước đã.", true);
+  const btn = $("rewrite"); btn.disabled = true; note("promptNote", "AI đang viết…");
+  try {
+    const { text } = await gemini({
+      model: $("textModel").value.trim() || "gemini-flash-latest",
+      system_instruction: WRITER,
+      input: `Current prompt:\n${current || "(none yet)"}\n\nChange request:\n${ask || "Make it richer and more specific while keeping the same intent."}`,
+    });
+    if (!text) throw new Error("AI không trả về nội dung.");
+    setPrompt(text); dirty = true; $("ask").value = "";
+    note("promptNote", "Đã viết lại — sửa tay tiếp hoặc bấm Hoàn tác.");
+  } catch (e) { note("promptNote", e.message, true); }
+  btn.disabled = false;
+};
+$("ask").onkeydown = e => { if (e.key === "Enter") $("rewrite").click(); };
+
+/* ---------- reference images ---------- */
+function shrink(src, max = 2048) {            // downscale to keep the request small
+  return new Promise((ok, fail) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      const url = c.toDataURL("image/jpeg", .9);
+      ok({ mime: "image/jpeg", data: url.split(",")[1], url });
+    };
+    img.onerror = () => fail(new Error("Không đọc được ảnh."));
+    img.src = src;
+  });
+}
+function renderRefs() {
+  $("refs").querySelectorAll(".ref").forEach(n => n.remove());
+  refs.forEach((r, i) => {
+    const d = document.createElement("div"); d.className = "ref";
+    const img = new Image(64, 64); img.src = r.url; img.alt = `Ảnh tham chiếu ${i + 1}`; img.loading = "lazy";
+    const x = document.createElement("button"); x.textContent = "×"; x.setAttribute("aria-label", "Bỏ ảnh tham chiếu");
+    x.onclick = () => { refs.splice(i, 1); renderRefs(); };
+    d.append(img, x); $("refs").prepend(d);
+  });
+}
+async function addRef(src) {
+  if (refs.length >= 6) return note("genNote", "Tối đa 6 ảnh tham chiếu.", true);
+  try { refs.push(await shrink(src)); renderRefs(); } catch (e) { note("genNote", e.message, true); }
+}
+$("refInput").onchange = async e => {
+  for (const f of e.target.files) await addRef(URL.createObjectURL(f));
+  e.target.value = "";
+};
+
+/* ---------- generate ---------- */
+let shot = 0;
+$("generate").onclick = async () => {
+  const prompt = $("prompt").value.trim();
+  if (!prompt) return note("genNote", "Chưa có prompt.", true);
+  try { needKey(); } catch (e) { return note("genNote", e.message, true); }
+  const ratio = $("ratio").value, [rw, rh] = ratio.split(":").map(Number);
+  const n = +$("count").value, btn = $("generate");
+  const body = {
+    model: $("imageModel").value,
+    input: refs.length
+      ? [{ type: "text", text: prompt }, ...refs.map(r => ({ type: "image", mime_type: r.mime, data: r.data }))]
+      : prompt,
+    response_format: { type: "image", aspect_ratio: ratio, image_size: $("size").value },
+  };
+  btn.disabled = true; $("empty").hidden = true; note("genNote", `Đang tạo ${n} ảnh…`);
+  let ok = 0, lastErr = "";
+  await Promise.all(Array.from({ length: n }, async () => {
+    const fig = document.createElement("figure");
+    const ph = document.createElement("div"); ph.className = "ph"; ph.style.aspectRatio = `${rw}/${rh}`; ph.textContent = "Đang tạo…";
+    fig.append(ph); $("results").prepend(fig);
+    try {
+      const { image, text } = await gemini(body);
+      if (!image) throw new Error(text || "Model không trả về ảnh (có thể prompt bị chặn).");
+      const url = `data:${image.mime_type || "image/png"};base64,${image.data}`;
+      const img = new Image(); img.alt = prompt.slice(0, 140); img.loading = "lazy";
+      img.onload = () => { img.width = img.naturalWidth; img.height = img.naturalHeight; };
+      img.src = url;
+      const a = document.createElement("a"); a.className = "link"; a.textContent = "Tải về"; a.href = url;
+      a.download = `slowp-${Date.now()}-${++shot}.${(image.mime_type || "image/png").split("/")[1]}`;
+      const use = document.createElement("button"); use.className = "link"; use.textContent = "Dùng làm tham chiếu";
+      use.title = "Thêm ảnh này vào ảnh tham chiếu để chỉnh tiếp";
+      use.onclick = () => addRef(url);
+      const cap = document.createElement("figcaption"); cap.append(a, use);
+      ph.replaceWith(img); fig.append(cap); ok++;
+    } catch (e) { lastErr = e.message; ph.classList.add("fail"); ph.textContent = e.message; }
+  }));
+  if (ok) remember(prompt);
+  note("genNote", ok === n ? "Xong." : ok ? `Xong ${ok}/${n} ảnh.` : lastErr, !ok);
+  btn.disabled = false;
+};
+</script>
+</body>
+</html>
